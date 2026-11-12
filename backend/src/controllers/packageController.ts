@@ -69,7 +69,7 @@ export const getAllPackages = async (req: Request, res: Response): Promise<any> 
 
 export const getPackageById = async (req: Request, res: Response): Promise<any> => {
   try {
-    const packageId = parseInt(req.params.id);
+    const packageId = parseInt(String(req.params.id));
     if (isNaN(packageId)) {
       return res.status(400).json({ success: false, message: "ID paket tidak valid" });
     }
@@ -216,7 +216,7 @@ export const createPackage = async (req: Request, res: Response): Promise<any> =
 
 export const updatePackage = async (req: Request, res: Response): Promise<any> => {
   try {
-    const packageId = parseInt(req.params.id);
+    const packageId = parseInt(String(req.params.id));
     if (isNaN(packageId)) {
       if (req.file && fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
@@ -325,7 +325,7 @@ export const updatePackage = async (req: Request, res: Response): Promise<any> =
 
 export const deletePackage = async (req: Request, res: Response): Promise<any> => {
   try {
-    const packageId = parseInt(req.params.id);
+    const packageId = parseInt(String(req.params.id));
     if (isNaN(packageId)) {
       return res.status(400).json({ success: false, message: "ID paket tidak valid" });
     }

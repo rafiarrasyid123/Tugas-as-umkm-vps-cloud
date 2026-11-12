@@ -38,7 +38,7 @@ export const getAllCategories = async (_req: Request, res: Response): Promise<an
 
 export const getCategoryById = async (req: Request, res: Response): Promise<any> => {
   try {
-    const categoryId = parseInt(req.params.id);
+    const categoryId = parseInt(String(req.params.id));
     if (isNaN(categoryId)) {
       return res.status(400).json({ success: false, message: "ID kategori tidak valid" });
     }
@@ -114,7 +114,7 @@ export const createCategory = async (req: Request, res: Response): Promise<any> 
 
 export const updateCategory = async (req: Request, res: Response): Promise<any> => {
   try {
-    const categoryId = parseInt(req.params.id);
+    const categoryId = parseInt(String(req.params.id));
     if (isNaN(categoryId)) {
       return res.status(400).json({ success: false, message: "ID kategori tidak valid" });
     }
@@ -156,7 +156,7 @@ export const updateCategory = async (req: Request, res: Response): Promise<any> 
 
 export const deleteCategory = async (req: Request, res: Response): Promise<any> => {
   try {
-    const categoryId = parseInt(req.params.id);
+    const categoryId = parseInt(String(req.params.id));
     if (isNaN(categoryId)) {
       return res.status(400).json({ success: false, message: "ID kategori tidak valid" });
     }
