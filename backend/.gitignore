@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Environment variables (JANGAN SAMPAI TER-PUSH KE GITHUB)
+.env
+.env.local
+
+# Uploads
+uploads/
+
+# Build
+dist/
+build/
+*.log

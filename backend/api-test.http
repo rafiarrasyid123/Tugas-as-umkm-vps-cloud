@@ -1,0 +1,180 @@
+### ====================================================================
+### SERVERCLOUD REST API - TESTING SUITE
+### Base URL: http://localhost:5000
+### ====================================================================
+
+@baseUrl = http://localhost:5000
+@adminToken = 
+@clientToken = 
+
+### 1. Health Check
+GET {{baseUrl}}/
+
+### --------------------------------------------------------------------
+### AUTHENTICATION & USERS
+### --------------------------------------------------------------------
+
+### 2. Login sebagai Admin
+# @name adminLogin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@servercloud.id",
+  "password": "password123"
+}
+
+### Ambil token admin dari response di atas lalu set ke variable
+@adminToken = {{adminLogin.response.body.data.token}}
+
+### 3. Login sebagai Client
+# @name clientLogin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "client@servercloud.id",
+  "password": "password123"
+}
+
+### Ambil token client dari response di atas lalu set ke variable
+@clientToken = {{clientLogin.response.body.data.token}}
+
+### 4. Register Pengguna Baru (Client)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "full_name": "Budi Santoso",
+  "email": "budi@example.com",
+  "password": "password123",
+  "phone": "081299887766"
+}
+
+### 5. Cek Validasi Zod (Email tidak valid & password kurang dari 6 digit)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "full_name": "X",
+  "email": "email_salah",
+  "password": "123"
+}
+
+### 6. Get Profile User Aktif (Admin)
+GET {{baseUrl}}/api/auth/profile
+Authorization: Bearer {{adminToken}}
+
+### --------------------------------------------------------------------
+### KATEGORI LAYANAN
+### --------------------------------------------------------------------
+
+### 7. Ambil Semua Kategori Layanan
+GET {{baseUrl}}/api/categories
+
+### 8. Ambil Detail Kategori Berdasarkan ID (Beserta Paketnya)
+GET {{baseUrl}}/api/categories/1
+
+### 9. Tambah Kategori Baru (Admin Only)
+POST {{baseUrl}}/api/categories
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Kubernetes Managed Cluster",
+  "description": "Layanan orkestrasi container otomatis dengan high-availability untuk arsitektur microservices."
+}
+
+### 10. Uji Otorisasi: Client mencoba Tambah Kategori (Ekspektasi: 403 Forbidden)
+POST {{baseUrl}}/api/categories
+Authorization: Bearer {{clientToken}}
+Content-Type: application/json
+
+{
+  "name": "Kategori Terlarang",
+  "description": "Tidak boleh dibuat oleh client biasa"
+}
+
+### 11. Update Kategori (Admin Only)
+PUT {{baseUrl}}/api/categories/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Cloud VPS NVMe Ultra",
+  "description": "Server virtual performa ekstrem dengan NVMe SSD Gen 4."
+}
+
+### --------------------------------------------------------------------
+### PAKET LAYANAN CLOUD / SERVER
+### --------------------------------------------------------------------
+
+### 12. Ambil Semua Paket Server
+GET {{baseUrl}}/api/packages
+
+### 13. Filter Paket Berdasarkan Kategori (contoh: category_id=1)
+GET {{baseUrl}}/api/packages?category_id=1
+
+### 14. Pencarian Paket Server (contoh: search=starter)
+GET {{baseUrl}}/api/packages?search=starter
+
+### 15. Urutkan Paket Berdasarkan Harga Termurah (sort=price_asc)
+GET {{baseUrl}}/api/packages?sort=price_asc
+
+### 16. Ambil Detail Paket Server Berdasarkan ID
+GET {{baseUrl}}/api/packages/1
+
+### 17. Tambah Paket Server Baru (Admin Only - JSON body)
+POST {{baseUrl}}/api/packages
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "category_id": 1,
+  "name": "VPS Developer Micro 2G",
+  "cpu_cores": 2,
+  "ram_gb": 2,
+  "storage_gb": 40,
+  "bandwidth_tb": 2,
+  "price_per_month": 120000,
+  "stock_available": 10,
+  "description": "Paket hemat khusus siswa dan mahasiswa untuk hosting tugas dan project latihan.",
+  "image_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80"
+}
+
+### 18. Uji Validasi Zod Paket Server (Ekspektasi: 400 Bad Request jika cpu/ram minus)
+POST {{baseUrl}}/api/packages
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "category_id": 1,
+  "name": "VP",
+  "cpu_cores": 0,
+  "ram_gb": -2,
+  "storage_gb": -50,
+  "bandwidth_tb": 0,
+  "price_per_month": -1000
+}
+
+### 19. Update Paket Server (Admin Only)
+PUT {{baseUrl}}/api/packages/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "category_id": 1,
+  "name": "VPS Starter NVMe 1G (Promo)",
+  "cpu_cores": 1,
+  "ram_gb": 1,
+  "storage_gb": 30,
+  "bandwidth_tb": 2,
+  "price_per_month": 75000,
+  "stock_available": 25,
+  "description": "Promo diskon akhir semester untuk pelajar dan UMKM.",
+  "image_url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80"
+}
+
+### 20. Hapus Paket Server (Admin Only)
+DELETE {{baseUrl}}/api/packages/4
+Authorization: Bearer {{adminToken}}

@@ -1,0 +1,45 @@
+{
+  "name": "servercloud-backend",
+  "version": "1.0.0",
+  "description": "Backend REST API Layanan Cloud & VPS Hosting UMKM (ServerCloud)",
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "npx tsx watch src/server.ts",
+    "start": "npx tsx src/server.ts",
+    "migrate": "npx tsx database/migrate.ts"
+  },
+  "keywords": [
+    "express",
+    "postgresql",
+    "zod",
+    "jwt",
+    "cloudinary",
+    "umkm",
+    "servercloud"
+  ],
+  "author": "Rafi Arrasyid",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^1.41.3",
+    "cors": "^2.8.5",
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0",
+    "pg": "^8.13.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.3",
+    "@types/pg": "^8.11.11",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
