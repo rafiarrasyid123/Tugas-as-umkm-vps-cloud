@@ -578,6 +578,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
   Widget _buildBottomNav() {
     return Container(
       decoration: const BoxDecoration(
