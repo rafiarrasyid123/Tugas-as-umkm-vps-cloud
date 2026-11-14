@@ -8,6 +8,7 @@ import 'screens/package/package_detail_screen.dart';
 import 'screens/package/package_form_screen.dart';
 import 'screens/order/order_detail_screen.dart';
 import 'screens/order/my_orders_screen.dart';
+import 'screens/profile/profile_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,7 @@ class ServerCloudApp extends StatelessWidget {
         '/package/form': (context) => const PackageFormScreen(),
         '/order/detail': (context) => const OrderDetailScreen(),
         '/my-orders': (context) => const MyOrdersScreen(),
+        '/profile': (context) => const ProfileScreen(),
       },
     );
   }

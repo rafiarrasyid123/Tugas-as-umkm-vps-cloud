@@ -8,6 +8,8 @@ import '../../services/auth_service.dart';
 import '../../services/category_service.dart';
 import '../../services/package_service.dart';
 import '../../widgets/package_card.dart';
+import '../order/my_orders_screen.dart';
+import '../profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _isLoading = true;
   int? _selectedCategoryId; // null = Semua
+  int _currentTabIndex = 0;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -212,11 +215,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_currentTabIndex == 1) {
+      return Scaffold(
+        body: const MyOrdersScreen(),
+        bottomNavigationBar: _buildBottomNav(),
+      );
+    }
+
+    if (_currentTabIndex == 2) {
+      return Scaffold(
+        body: const ProfileScreen(),
+        bottomNavigationBar: _buildBottomNav(),
+      );
+    }
+
     final isAdmin = _currentUser?.isAdmin ?? false;
 
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: _buildAppBar(isAdmin),
+      bottomNavigationBar: _buildBottomNav(),
       floatingActionButton: isAdmin
           ? _buildAddPackageFab()
           : null,
@@ -558,6 +576,48 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+      ),
+    );
+  Widget _buildBottomNav() {
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppTheme.surface,
+        border: Border(top: BorderSide(color: AppTheme.border, width: 2.0)),
+      ),
+      child: BottomNavigationBar(
+        currentIndex: _currentTabIndex,
+        onTap: (index) {
+          setState(() {
+            _currentTabIndex = index;
+          });
+          if (index == 0) {
+            _filterPackages();
+          }
+        },
+        backgroundColor: AppTheme.surface,
+        selectedItemColor: AppTheme.primary,
+        unselectedItemColor: AppTheme.textMuted,
+        selectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w800, fontSize: 11),
+        unselectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 11),
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dns_outlined),
+            activeIcon: Icon(Icons.dns),
+            label: 'Katalog',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long_outlined),
+            activeIcon: Icon(Icons.receipt_long),
+            label: 'Riwayat Sewa',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Profil Saya',
+          ),
+        ],
       ),
     );
   }
