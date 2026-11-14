@@ -211,3 +211,101 @@ Dokumentasi lengkap endpoint API, method HTTP, status code, dan skema request/re
 ### 3.4 Update & Hapus Paket
 * **PUT** `/api/packages/:id` (Admin Only, Form-data / JSON)
 * **DELETE** `/api/packages/:id` (Admin Only, 200 OK)
+
+
+---
+
+## 4. Transaksi Sewa & Tagihan Server (`/api/orders`)
+
+### 4.1 Buat Pesanan Sewa Baru (Checkout)
+* **URL**: `/api/orders`
+* **Method**: `POST`
+* **Access**: Authenticated Client (`Authorization: Bearer <token>`)
+* **Request Body** (JSON):
+```json
+{
+  "package_id": 1,
+  "duration_months": 3,
+  "payment_method": "bca_va"
+}
+```
+* **Success Response (201 Created)**:
+```json
+{
+  "success": true,
+  "message": "Pesanan sewa berhasil dibuat",
+  "data": {
+    "id": 1,
+    "order_number": "SC-INV-20261114-4821",
+    "user_id": 2,
+    "package_id": 1,
+    "duration_months": 3,
+    "total_price": "255000.00",
+    "status": "pending",
+    "payment_method": "bca_va",
+    "payment_code": "8801239847120",
+    "server_ip": null,
+    "package_name": "VPS Starter NVMe 1G"
+  }
+}
+```
+
+### 4.2 Ambil Daftar Server & Riwayat Pesanan Saya
+* **URL**: `/api/orders/my-orders`
+* **Method**: `GET`
+* **Access**: Authenticated Client (`Authorization: Bearer <token>`)
+* **Success Response (200 OK)**:
+```json
+{
+  "success": true,
+  "message": "Berhasil mengambil riwayat pesanan sewa",
+  "total": 1,
+  "data": [
+    {
+      "id": 1,
+      "order_number": "SC-INV-20261114-4821",
+      "package_name": "VPS Starter NVMe 1G",
+      "cpu_cores": 1,
+      "ram_gb": 1,
+      "storage_gb": 25,
+      "bandwidth_tb": 1,
+      "duration_months": 3,
+      "total_price": "255000.00",
+      "status": "active",
+      "server_ip": "103.187.24.89",
+      "created_at": "2026-11-14T09:14:00.000Z"
+    }
+  ]
+}
+```
+
+### 4.3 Detail Tagihan / Invoice
+* **URL**: `/api/orders/:id`
+* **Method**: `GET`
+* **Access**: Owner User or Admin
+* **Success Response (200 OK)**
+
+### 4.4 Konfirmasi / Simulasi Pembayaran
+* **URL**: `/api/orders/:id/pay`
+* **Method**: `PATCH`
+* **Access**: Owner User or Admin
+* **Success Response (200 OK)**:
+```json
+{
+  "success": true,
+  "message": "Pembayaran berhasil diverifikasi. Server cloud Anda telah aktif!",
+  "data": {
+    "id": 1,
+    "order_number": "SC-INV-20261114-4821",
+    "status": "active",
+    "server_ip": "103.187.24.89",
+    "paid_at": "2026-11-14T09:20:00.000Z"
+  }
+}
+```
+
+### 4.5 Ambil Seluruh Transaksi Sewa (Admin Only)
+* **URL**: `/api/orders`
+* **Method**: `GET`
+* **Access**: **Admin Only** (`Authorization: Bearer <admin_token>`)
+* **Success Response (200 OK)**

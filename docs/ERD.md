@@ -14,6 +14,8 @@
 erDiagram
     USERS ||--o{ SERVER_PACKAGES : "creates_and_manages"
     SERVICE_CATEGORIES ||--o{ SERVER_PACKAGES : "categorizes"
+    USERS ||--o{ ORDERS : "places"
+    SERVER_PACKAGES ||--o{ ORDERS : "ordered_in"
 
     USERS {
         serial id PK
@@ -49,6 +51,21 @@ erDiagram
         int created_by FK
         timestamptz created_at
         timestamptz updated_at
+    }
+
+    ORDERS {
+        serial id PK
+        varchar(60) order_number UK
+        int user_id FK
+        int package_id FK
+        int duration_months
+        numeric(14,2) total_price
+        varchar(20) status "pending | active | cancelled"
+        varchar(50) payment_method
+        varchar(100) payment_code
+        varchar(50) server_ip "Alokasi IP setelah lunas"
+        timestamptz created_at
+        timestamptz paid_at
     }
 ```
 
@@ -98,12 +115,35 @@ Daftar paket spesifikasi server dan harga sewa bulanan yang ditawarkan.
 | `created_at` | `TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP` | Waktu dibuat |
 | `updated_at` | `TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP` | Waktu terakhir diperbarui |
 
+### D. Tabel `orders` (Data Transaksi Sewa & Tagihan)
+Menyimpan riwayat sewa server oleh pelanggan UMKM beserta status pembayaran dan alokasi node server.
+| Nama Kolom | Tipe Data | Keterangan |
+| :--- | :--- | :--- |
+| `id` | `SERIAL PRIMARY KEY` | ID transaksi sewa (Auto Increment) |
+| `order_number` | `VARCHAR(60) UNIQUE NOT NULL` | Nomor invoice resmi (contoh: `SC-INV-20261114-1029`) |
+| `user_id` | `INT NOT NULL (FK)` | Relasi ke `users(id)` pembeli/pelanggan |
+| `package_id` | `INT NOT NULL (FK)` | Relasi ke `server_packages(id)` yang disewa |
+| `duration_months` | `INT NOT NULL DEFAULT 1` | Durasi masa sewa (1, 3, 12 bulan) |
+| `total_price` | `NUMERIC(14,2) NOT NULL` | Total biaya sewa (harga/bulan $\times$ durasi) |
+| `status` | `VARCHAR(20) NOT NULL DEFAULT 'pending'` | Status transaksi (`pending`, `active`, `cancelled`) |
+| `payment_method` | `VARCHAR(50) NOT NULL` | Metode bayar (`bca_va`, `mandiri_va`, `qris`) |
+| `payment_code` | `VARCHAR(100)` | Nomor Virtual Account / Kode Bayar |
+| `server_ip` | `VARCHAR(50)` | Alokasi IP Address node server saat status aktif |
+| `created_at` | `TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP` | Waktu pembuatan order/invoice |
+| `paid_at` | `TIMESTAMPTZ` | Waktu konfirmasi pembayaran |
+
 ---
 
 ## 3. Relasi & Integritas Data
-1. **Relasi `service_categories` -> `server_packages`**:
+1. **Relasi `service_categories` $\to$ `server_packages`**:
    - Tipe: **One-to-Many (1:N)**. Satu kategori dapat memiliki banyak paket server.
-   - Aturan Integritas: `ON DELETE RESTRICT ON UPDATE CASCADE`. Kategori tidak boleh dihapus jika masih ada paket server aktif di dalamnya untuk mencegah *orphan records*.
-2. **Relasi `users` -> `server_packages`**:
-   - Tipe: **One-to-Many (1:N)**. Satu user admin dapat menginput banyak paket server.
-   - Aturan Integritas: `ON DELETE SET NULL ON UPDATE CASCADE`. Jika user dihapus, data paket tetap aman dan kolom `created_by` diset NULL.
+   - Aturan Integritas: `ON DELETE RESTRICT ON UPDATE CASCADE`. Kategori tidak boleh dihapus jika masih ada paket server aktif di dalamnya.
+2. **Relasi `users` $\to$ `server_packages`**:
+   - Tipe: **One-to-Many (1:N)**. Satu admin dapat menginput banyak paket server.
+   - Aturan Integritas: `ON DELETE SET NULL ON UPDATE CASCADE`.
+3. **Relasi `users` $\to$ `orders`**:
+   - Tipe: **One-to-Many (1:N)**. Satu pelanggan dapat memiliki banyak transaksi sewa.
+   - Aturan Integritas: `ON DELETE CASCADE`. Jika user dihapus, seluruh riwayat pesanannya ikut terhapus secara beruntun.
+4. **Relasi `server_packages` $\to$ `orders`**:
+   - Tipe: **One-to-Many (1:N)**. Satu paket server dapat dipesan di banyak transaksi.
+   - Aturan Integritas: `ON DELETE RESTRICT`. Paket server yang pernah dipesan tidak boleh dihapus paksa dari database demi integritas pembukuan transaksi.

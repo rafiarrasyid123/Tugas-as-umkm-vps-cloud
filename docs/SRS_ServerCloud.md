@@ -116,6 +116,12 @@ Pengembangan sistem ServerCloud mengadopsi model **SDLC Waterfall (Air Terjun)**
    - `FR-13`: Admin dapat mengunggah file gambar banner/diagram arsitektur server (format JPG/PNG/WEBP, ukuran maks 2MB) yang terhubung ke Cloudinary atau penyimpanan lokal.
    - `FR-14`: Admin dapat memperbarui data spesifikasi dan mengganti foto banner paket server.
    - `FR-15`: Admin dapat menghapus paket server dari katalog.
+4. **Modul Transaksi Sewa & Tagihan (Order & Invoicing)**:
+   - `FR-16`: Pengguna (Client) dapat melakukan penyewaan paket server dengan memilih durasi sewa (1, 3, atau 12 bulan) dan metode pembayaran (BCA VA, Mandiri VA, QRIS).
+   - `FR-17`: Sistem secara otomatis menghitung total biaya sewa dan menerbitkan nomor invoice unik (`SC-INV-YYYYMMDD-XXXX`) dengan status awal `pending`.
+   - `FR-18`: Pengguna dapat melihat daftar tagihan dan riwayat server miliknya beserta status aktivasi.
+   - `FR-19`: Pengguna dapat melakukan simulasi pelunasan tagihan melalui Virtual Account/QRIS yang secara instan mengubah status order menjadi `active` dan mengalokasikan IP Address node server publik (`103.187.xx.xx`).
+   - `FR-20`: Administrator dapat memantau seluruh riwayat transaksi sewa masuk dari semua pelanggan UMKM.
 
 ### 3.4 Kebutuhan Non-Fungsional (Non-Functional Requirements)
 * **Kebutuhan Produk (Product Requirements)**:
@@ -156,11 +162,16 @@ flowchart LR
         UC4([Kelola Kategori Layanan CRUD])
         UC5([Kelola Paket Server CRUD])
         UC6([Unggah Gambar Banner Server])
+        UC7([Pemesanan Sewa & Penerbitan Invoice])
+        UC8([Simulasi Bayar & Aktivasi Server])
+        UC9([Monitoring Seluruh Transaksi Sewa])
     end
 
     Client --> UC1
     Client --> UC2
     Client --> UC3
+    Client --> UC7
+    Client --> UC8
 
     Admin --> UC1
     Admin --> UC2
@@ -168,6 +179,7 @@ flowchart LR
     Admin --> UC4
     Admin --> UC5
     Admin --> UC6
+    Admin --> UC9
 ```
 
 #### B. Activity Diagram: Tambah Paket Server (Admin)
@@ -241,8 +253,30 @@ classDiagram
         +delete()
     }
 
+    class Order {
+        +int id
+        +string order_number
+        +int user_id
+        +int package_id
+        +int duration_months
+        +decimal total_price
+        +string status
+        +string payment_method
+        +string payment_code
+        +string server_ip
+        +DateTime created_at
+        +DateTime paid_at
+        +create()
+        +getMyOrders()
+        +getById()
+        +pay()
+        +getAll()
+    }
+
     User "1" -- "0..*" ServerPackage : creates
     ServiceCategory "1" -- "0..*" ServerPackage : classifies
+    User "1" -- "0..*" Order : places
+    ServerPackage "1" -- "0..*" Order : ordered_in
 ```
 
 ---
@@ -254,6 +288,8 @@ classDiagram
 erDiagram
     USERS ||--o{ SERVER_PACKAGES : "manages"
     SERVICE_CATEGORIES ||--o{ SERVER_PACKAGES : "classifies"
+    USERS ||--o{ ORDERS : "places"
+    SERVER_PACKAGES ||--o{ ORDERS : "ordered_in"
 
     USERS {
         serial id PK
@@ -290,6 +326,21 @@ erDiagram
         timestamptz created_at
         timestamptz updated_at
     }
+
+    ORDERS {
+        serial id PK
+        varchar order_number UK
+        int user_id FK
+        int package_id FK
+        int duration_months
+        numeric total_price
+        varchar status
+        varchar payment_method
+        varchar payment_code
+        varchar server_ip
+        timestamptz created_at
+        timestamptz paid_at
+    }
 ```
 
 #### B. Table Schema
@@ -323,6 +374,19 @@ erDiagram
    - `created_by` (INT, FK ke `users.id` ON DELETE SET NULL)
    - `created_at` (TIMESTAMPTZ)
    - `updated_at` (TIMESTAMPTZ)
+4. **Tabel `orders`**:
+   - `id` (SERIAL, Primary Key)
+   - `order_number` (VARCHAR(60), UNIQUE, NOT NULL)
+   - `user_id` (INT, FK ke `users.id` ON DELETE CASCADE)
+   - `package_id` (INT, FK ke `server_packages.id` ON DELETE RESTRICT)
+   - `duration_months` (INT, DEFAULT 1)
+   - `total_price` (NUMERIC(14,2), NOT NULL)
+   - `status` (VARCHAR(20), CHECK status IN ('pending', 'active', 'cancelled'))
+   - `payment_method` (VARCHAR(50), NOT NULL)
+   - `payment_code` (VARCHAR(100))
+   - `server_ip` (VARCHAR(50))
+   - `created_at` (TIMESTAMPTZ, DEFAULT CURRENT_TIMESTAMP)
+   - `paid_at` (TIMESTAMPTZ)
 
 ---
 
