@@ -4,6 +4,8 @@ import 'screens/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'screens/package/package_detail_screen.dart';
+import 'screens/package/package_form_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +27,8 @@ class ServerCloudApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
+        '/package/detail': (context) => const PackageDetailScreen(),
+        '/package/form': (context) => const PackageFormScreen(),
       },
     );
   }
