@@ -18,7 +18,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  String _selectedRole = 'client';
   bool _obscurePassword = true;
   bool _isLoading = false;
 
@@ -41,7 +40,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       email: _emailController.text.trim(),
       password: _passwordController.text,
       phone: _phoneController.text.trim(),
-      role: _selectedRole,
     );
 
     setState(() => _isLoading = false);
@@ -182,72 +180,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         }
                         return null;
                       },
-                    ),
-                    const SizedBox(height: 14),
-
-                    // Pemilihan Role
-                    const Text(
-                      'ROLE PENGGUNA',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.8,
-                        color: AppTheme.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _selectedRole = 'client'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: AppTheme.neoDecoration(
-                                color: _selectedRole == 'client' ? AppTheme.accentSoft : Colors.white,
-                                radius: 8,
-                                borderWidth: 2.0,
-                                borderColor: _selectedRole == 'client' ? AppTheme.accent : AppTheme.border,
-                                shadowOffset: const Offset(2, 2),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Client (Pelanggan)',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  color: _selectedRole == 'client' ? const Color(0xFF0284C7) : AppTheme.textPrimary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _selectedRole = 'admin'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: AppTheme.neoDecoration(
-                                color: _selectedRole == 'admin' ? AppTheme.primaryLight : Colors.white,
-                                radius: 8,
-                                borderWidth: 2.0,
-                                borderColor: _selectedRole == 'admin' ? AppTheme.primary : AppTheme.border,
-                                shadowOffset: const Offset(2, 2),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Admin (Pengelola)',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  color: _selectedRole == 'admin' ? AppTheme.primary : AppTheme.textPrimary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                     const SizedBox(height: 24),
 

@@ -20,7 +20,8 @@ export const register = async (req: Request, res: Response): Promise<any> => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const userRole = role === "admin" ? "admin" : "client";
+    // Pendaftaran publik selalu otomatis mendapatkan role client untuk keamanan sistem
+    const userRole = "client";
 
     const result = await pool.query(
       `INSERT INTO users (full_name, email, password, role, phone)
