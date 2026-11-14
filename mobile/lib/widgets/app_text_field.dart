@@ -5,11 +5,12 @@ class AppTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final String? hint;
+  final String? hintText;
   final bool obscureText;
   final TextInputType keyboardType;
   final int maxLines;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
+  final dynamic prefixIcon;
+  final dynamic suffixIcon;
   final String? Function(String?)? validator;
 
   const AppTextField({
@@ -17,6 +18,7 @@ class AppTextField extends StatelessWidget {
     required this.controller,
     required this.label,
     this.hint,
+    this.hintText,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
@@ -25,8 +27,19 @@ class AppTextField extends StatelessWidget {
     this.validator,
   });
 
+  Widget? _resolveIcon(dynamic icon) {
+    if (icon == null) return null;
+    if (icon is Widget) return icon;
+    if (icon is IconData) {
+      return Icon(icon, size: 20, color: AppTheme.textPrimary);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final effectiveHint = hintText ?? hint;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -59,7 +72,7 @@ class AppTextField extends StatelessWidget {
               color: AppTheme.textPrimary,
             ),
             decoration: InputDecoration(
-              hintText: hint,
+              hintText: effectiveHint,
               hintStyle: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -67,8 +80,8 @@ class AppTextField extends StatelessWidget {
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              prefixIcon: prefixIcon,
-              suffixIcon: suffixIcon,
+              prefixIcon: _resolveIcon(prefixIcon),
+              suffixIcon: _resolveIcon(suffixIcon),
             ),
           ),
         ),

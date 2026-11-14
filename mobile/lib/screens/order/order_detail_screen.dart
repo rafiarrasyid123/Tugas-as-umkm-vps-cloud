@@ -656,7 +656,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       ),
                       content: Text(
                         'Gunakan terminal Anda untuk terhubung ke VPS:\n\nssh root@${_order!.serverIp ?? "103.187.22.45"} -p 22',
-                        style: GoogleFonts.inter(fontFamily: 'monospace', fontSize: 12),
+                        style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
                       ),
                       actions: [
                         TextButton(
