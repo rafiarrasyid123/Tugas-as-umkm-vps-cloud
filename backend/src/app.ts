@@ -4,6 +4,7 @@ import path from "path";
 import authRoutes from "./routes/authRoutes.ts";
 import categoryRoutes from "./routes/categoryRoutes.ts";
 import packageRoutes from "./routes/packageRoutes.ts";
+import orderRoutes from "./routes/orderRoutes.ts";
 import { notFoundHandler, globalErrorHandler } from "./middlewares/errorHandler.ts";
 import { getDocsHtml } from "./docs/apiDocsHtml.ts";
 
@@ -64,6 +65,7 @@ app.get("/api/docs", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/packages", packageRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Error Handling Middlewares
 app.use(notFoundHandler);

@@ -6,6 +6,8 @@ import '../../models/package_model.dart';
 import '../../models/user_model.dart';
 import '../../services/auth_service.dart';
 import '../../services/package_service.dart';
+import '../../services/order_service.dart';
+import '../../models/order_model.dart';
 import '../../widgets/app_button.dart';
 
 class PackageDetailScreen extends StatefulWidget {
@@ -135,144 +137,291 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
   void _showOrderBottomSheet() {
     if (_package == null) return;
 
+    int selectedDuration = 1; // 1, 3, 12 bulan
+    String selectedPayment = 'bca_va';
+    bool isSubmitting = false;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (ctx) => Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          border: Border(
-            top: BorderSide(color: AppTheme.border, width: 2.5),
-            left: BorderSide(color: AppTheme.border, width: 2.5),
-            right: BorderSide(color: AppTheme.border, width: 2.5),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 48,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCBD5E1),
-                  borderRadius: BorderRadius.circular(10),
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) {
+          final totalPrice = _package!.pricePerMonth * selectedDuration;
+
+          return Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              color: AppTheme.surface,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              border: Border(
+                top: BorderSide(color: AppTheme.border, width: 2.5),
+                left: BorderSide(color: AppTheme.border, width: 2.5),
+                right: BorderSide(color: AppTheme.border, width: 2.5),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 48,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFCBD5E1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Konfirmasi Pemesanan Layanan',
-              style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                color: AppTheme.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Detail pesanan paket server UMKM Anda:',
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: AppTheme.textMuted,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Ringkasan Card
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: AppTheme.neoDecoration(
-                color: AppTheme.background,
-                radius: 10,
-                borderWidth: 1.8,
-                shadowOffset: const Offset(2, 2),
-              ),
-              child: Column(
-                children: [
-                  _buildSummaryRow('Paket Layanan', _package!.name),
-                  const Divider(color: Color(0xFFCBD5E1), height: 16),
-                  _buildSummaryRow('Kategori', _package!.categoryName),
-                  const Divider(color: Color(0xFFCBD5E1), height: 16),
-                  _buildSummaryRow(
-                    'Spesifikasi',
-                    '${_package!.cpuCores} vCPU / ${_package!.ramGb} GB / ${_package!.storageGb} GB NVMe',
+                const SizedBox(height: 16),
+                Text(
+                  'Formulir Sewa Server',
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.textPrimary,
                   ),
-                  const Divider(color: Color(0xFFCBD5E1), height: 16),
-                  _buildSummaryRow('Durasi Sewa', '1 Bulan (Bulanan)'),
-                  const Divider(color: Color(0xFFCBD5E1), height: 16),
-                  _buildSummaryRow(
-                    'Total Biaya',
-                    _formatPrice(_package!.pricePerMonth),
-                    isBold: true,
-                    highlightColor: AppTheme.primary,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Pilih durasi sewa dan metode pembayaran untuk paket ${_package!.name}:',
+                  style: GoogleFonts.inter(fontSize: 12, color: AppTheme.textMuted),
+                ),
+                const SizedBox(height: 14),
+
+                // Pilih Durasi
+                Text(
+                  'DURASI SEWA',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.textMuted,
+                    letterSpacing: 0.8,
                   ),
-                ],
-              ),
-            ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _buildDurationOption(
+                      months: 1,
+                      label: '1 Bulan',
+                      isSelected: selectedDuration == 1,
+                      onTap: () => setModalState(() => selectedDuration = 1),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildDurationOption(
+                      months: 3,
+                      label: '3 Bulan',
+                      isSelected: selectedDuration == 3,
+                      onTap: () => setModalState(() => selectedDuration = 3),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildDurationOption(
+                      months: 12,
+                      label: '12 Bulan',
+                      isSelected: selectedDuration == 12,
+                      onTap: () => setModalState(() => selectedDuration = 12),
+                    ),
+                  ],
+                ),
 
-            const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
-            AppButton(
-              text: 'Konfirmasi & Aktivasi Server',
-              icon: Icons.check_circle_outline,
-              onPressed: () {
-                Navigator.pop(ctx);
-                _showSuccessOrderDialog();
-              },
+                // Pilih Metode Pembayaran
+                Text(
+                  'METODE PEMBAYARAN',
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: AppTheme.textMuted,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _buildPaymentOption(
+                      code: 'bca_va',
+                      label: 'BCA VA',
+                      isSelected: selectedPayment == 'bca_va',
+                      onTap: () => setModalState(() => selectedPayment = 'bca_va'),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildPaymentOption(
+                      code: 'mandiri_va',
+                      label: 'Mandiri VA',
+                      isSelected: selectedPayment == 'mandiri_va',
+                      onTap: () => setModalState(() => selectedPayment = 'mandiri_va'),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildPaymentOption(
+                      code: 'qris',
+                      label: 'QRIS',
+                      isSelected: selectedPayment == 'qris',
+                      onTap: () => setModalState(() => selectedPayment = 'qris'),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Rincian Biaya
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: AppTheme.neoDecoration(
+                    color: AppTheme.background,
+                    radius: 10,
+                    borderWidth: 1.8,
+                    shadowOffset: const Offset(2, 2),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Total Pembayaran ($selectedDuration Bulan)',
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              color: AppTheme.textMuted,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            _formatPrice(totalPrice),
+                            style: GoogleFonts.inter(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w900,
+                              color: AppTheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE2E8F0),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          selectedPayment.toUpperCase().replaceAll('_', ' '),
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                AppButton(
+                  text: 'Konfirmasi & Terbitkan Tagihan',
+                  icon: Icons.receipt_long,
+                  isLoading: isSubmitting,
+                  onPressed: isSubmitting
+                      ? null
+                      : () async {
+                          setModalState(() => isSubmitting = true);
+                          final res = await OrderService.createOrder(
+                            packageId: _package!.id,
+                            durationMonths: selectedDuration,
+                            paymentMethod: selectedPayment,
+                          );
+                          setModalState(() => isSubmitting = false);
+
+                          if (!context.mounted) return;
+                          Navigator.pop(ctx);
+
+                          if (res['success'] == true && res['data'] is OrderModel) {
+                            Navigator.pushNamed(
+                              context,
+                              '/order/detail',
+                              arguments: res['data'],
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(res['message'] ?? 'Gagal membuat pesanan'),
+                                backgroundColor: AppTheme.danger,
+                              ),
+                            );
+                          }
+                        },
+                ),
+                const SizedBox(height: 10),
+              ],
             ),
-            const SizedBox(height: 10),
-          ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildDurationOption({
+    required int months,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: AppTheme.neoDecoration(
+            color: isSelected ? AppTheme.primary : AppTheme.surface,
+            radius: 8,
+            borderWidth: 1.8,
+            shadowOffset: isSelected ? const Offset(2.5, 2.5) : const Offset(1.5, 1.5),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: isSelected ? Colors.white : AppTheme.textPrimary,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  void _showSuccessOrderDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppTheme.border, width: 2.2),
-        ),
-        title: Row(
-          children: [
-            const Icon(Icons.check_circle, color: AppTheme.success, size: 26),
-            const SizedBox(width: 8),
-            Text(
-              'Pesanan Diproses!',
-              style: GoogleFonts.inter(fontWeight: FontWeight.w800),
-            ),
-          ],
-        ),
-        content: Text(
-          'Permintaan sewa untuk "${_package!.name}" berhasil dicatat. Tim ServerCloud akan menyiapkan konfigurasi server Anda.',
-          style: GoogleFonts.inter(height: 1.4),
-        ),
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: const BorderSide(color: AppTheme.border, width: 1.5),
-              ),
-            ),
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Kembali',
-              style: GoogleFonts.inter(fontWeight: FontWeight.w800),
+  Widget _buildPaymentOption({
+    required String code,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: AppTheme.neoDecoration(
+            color: isSelected ? AppTheme.accentSoft : AppTheme.surface,
+            radius: 8,
+            borderWidth: 1.8,
+            borderColor: isSelected ? AppTheme.accent : AppTheme.border,
+            shadowOffset: isSelected ? const Offset(2.5, 2.5) : const Offset(1.5, 1.5),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: isSelected ? const Color(0xFF0369A1) : AppTheme.textPrimary,
             ),
           ),
-        ],
+        ),
       ),
     );
   }

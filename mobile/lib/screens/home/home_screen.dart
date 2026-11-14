@@ -355,6 +355,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       actions: [
+        // Shortcut Server & Riwayat Sewa Saya
+        IconButton(
+          tooltip: 'Server & Riwayat Sewa',
+          icon: const Icon(Icons.receipt_long, size: 22, color: AppTheme.primary),
+          onPressed: () {
+            Navigator.pushNamed(context, '/my-orders');
+          },
+        ),
+
         // Role Badge
         if (_currentUser != null)
           Container(
