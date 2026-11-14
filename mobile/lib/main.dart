@@ -3,6 +3,7 @@ import 'config/app_theme.dart';
 import 'screens/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
+import 'screens/home/home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +24,7 @@ class ServerCloudApp extends StatelessWidget {
         '/splash': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/home': (context) => const Scaffold(
-          body: Center(child: Text("Halaman Home (Tahap Selanjutnya)")),
-        ),
+        '/home': (context) => const HomeScreen(),
       },
     );
   }
