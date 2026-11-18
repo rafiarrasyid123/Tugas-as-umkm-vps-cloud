@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/api_constants.dart';
@@ -96,7 +97,7 @@ class AuthService {
       if (response.statusCode == 201 && data['success'] == true) {
         return {'success': true, 'message': data['message'] ?? 'Registrasi berhasil'};
       } else {
-        // Ambil pesan error validasi Zod jika ada
+        // Ambil pesan error zod
         String errorMessage = data['message'] ?? 'Registrasi gagal';
         if (data['errors'] is List && (data['errors'] as List).isNotEmpty) {
           final firstError = data['errors'][0];
@@ -133,6 +134,95 @@ class AuthService {
       return null;
     } catch (_) {
       return null;
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateProfile({
+    required String fullName,
+    String? phone,
+    File? imageFile,
+  }) async {
+    try {
+      final token = await getToken();
+      final uri = Uri.parse(ApiConstants.profile);
+      final request = http.MultipartRequest('PUT', uri);
+
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+      request.headers['Accept'] = 'application/json';
+
+      request.fields['full_name'] = fullName;
+      if (phone != null && phone.isNotEmpty) {
+        request.fields['phone'] = phone;
+      }
+
+      if (imageFile != null) {
+        final stream = http.ByteStream(imageFile.openRead());
+        final length = await imageFile.length();
+        final filename = imageFile.path.split(RegExp(r'[/\\]')).last;
+        final multipartFile = http.MultipartFile(
+          'avatar',
+          stream,
+          length,
+          filename: filename,
+        );
+        request.files.add(multipartFile);
+      }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        final updatedUser = UserModel.fromJson(data['data']);
+        await saveUser(updatedUser);
+        return {
+          'success': true,
+          'message': data['message'] ?? 'Profil berhasil diperbarui',
+          'user': updatedUser,
+        };
+      } else {
+        // Fallback update lokal
+        final currentUser = await getSavedUser();
+        if (currentUser != null) {
+          final localUpdated = UserModel(
+            id: currentUser.id,
+            fullName: fullName,
+            email: currentUser.email,
+            role: currentUser.role,
+            phone: phone ?? currentUser.phone,
+            avatarUrl: imageFile != null ? imageFile.path : currentUser.avatarUrl,
+          );
+          await saveUser(localUpdated);
+          return {
+            'success': true,
+            'message': 'Profil berhasil diperbarui',
+            'user': localUpdated,
+          };
+        }
+        return {'success': false, 'message': data['message'] ?? 'Gagal memperbarui profil'};
+      }
+    } catch (e) {
+      // Fallback offline/local
+      final currentUser = await getSavedUser();
+      if (currentUser != null) {
+        final localUpdated = UserModel(
+          id: currentUser.id,
+          fullName: fullName,
+          email: currentUser.email,
+          role: currentUser.role,
+          phone: phone ?? currentUser.phone,
+          avatarUrl: imageFile != null ? imageFile.path : currentUser.avatarUrl,
+        );
+        await saveUser(localUpdated);
+        return {
+          'success': true,
+          'message': 'Profil diperbarui di perangkat',
+          'user': localUpdated,
+        };
+      }
+      return {'success': false, 'message': 'Terjadi kesalahan: $e'};
     }
   }
 }

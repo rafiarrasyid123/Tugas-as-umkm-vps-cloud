@@ -471,7 +471,140 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => _onCategorySelected(cat.id),
             ),
           ),
+          if (_currentUser?.isAdmin == true)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: GestureDetector(
+                onTap: _showAddCategoryDialog,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: AppTheme.neoDecoration(
+                    color: const Color(0xFFFEF3C7),
+                    radius: 8,
+                    borderWidth: 1.8,
+                    shadowOffset: const Offset(1.5, 1.5),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.add, size: 14, color: Color(0xFFB45309)),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Kategori',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFFB45309),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
+      ),
+    );
+  }
+
+  void _showAddCategoryDialog() {
+    final nameCtrl = TextEditingController();
+    final descCtrl = TextEditingController();
+    bool isSaving = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setModalState) => AlertDialog(
+          backgroundColor: AppTheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: AppTheme.border, width: 2.2),
+          ),
+          title: Text(
+            'Tambah Kategori Baru',
+            style: GoogleFonts.inter(fontWeight: FontWeight.w800),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Nama Kategori',
+                  hintText: 'Contoh: Bare Metal Server',
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: descCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Deskripsi (Opsional)',
+                  hintText: 'Keterangan kategori...',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                'Batal',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textMuted,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: const BorderSide(color: AppTheme.border, width: 1.5),
+                ),
+              ),
+              onPressed: isSaving
+                  ? null
+                  : () async {
+                      if (nameCtrl.text.trim().isEmpty) return;
+                      setModalState(() => isSaving = true);
+                      final res = await CategoryService.createCategory(
+                        name: nameCtrl.text.trim(),
+                        description: descCtrl.text.trim(),
+                      );
+                      if (context.mounted) {
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(res['message'] ?? ''),
+                            backgroundColor: res['success']
+                                ? AppTheme.success
+                                : AppTheme.danger,
+                          ),
+                        );
+                        if (res['success'] == true) {
+                          _loadInitialData();
+                        }
+                      }
+                    },
+              child: isSaving
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      'Simpan',
+                      style: GoogleFonts.inter(fontWeight: FontWeight.w800),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

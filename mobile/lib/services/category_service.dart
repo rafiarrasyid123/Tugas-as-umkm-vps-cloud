@@ -54,4 +54,25 @@ class CategoryService {
       return {'success': false, 'message': 'Kesalahan jaringan: $e'};
     }
   }
+
+  static Future<Map<String, dynamic>> deleteCategory(int id) async {
+    try {
+      final token = await AuthService.getToken();
+      final response = await http.delete(
+        Uri.parse('${ApiConstants.categories}/$id'),
+        headers: {
+          'Accept': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+
+      final body = jsonDecode(response.body);
+      if (response.statusCode == 200 && body['success'] == true) {
+        return {'success': true, 'message': body['message'] ?? 'Kategori dihapus'};
+      }
+      return {'success': false, 'message': body['message'] ?? 'Gagal menghapus kategori'};
+    } catch (e) {
+      return {'success': false, 'message': 'Kesalahan jaringan: $e'};
+    }
+  }
 }

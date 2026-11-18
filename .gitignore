@@ -25,10 +25,8 @@ build/
 .DS_Store
 Thumbs.db
 
-# Documents (Word / Office)
+# Documents (Word / Office / Excel)
 *.docx
 *.doc
-
-# Documents (Word / Office)
-*.docx
-*.doc
+*.xlsx
+*.xls

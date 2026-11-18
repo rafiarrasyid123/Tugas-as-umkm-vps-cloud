@@ -84,6 +84,75 @@ Pengembangan sistem ServerCloud mengadopsi model **SDLC Waterfall (Air Terjun)**
 | 7 | Integrasi API Client Flutter dengan Backend |  |  |  |  |  | ████ | ████ |  |
 | 8 | Pengujian Sistem (Blackbox Testing) & Deployment |  |  |  |  |  |  |  | ████ |
 
+### 2.3 Work Breakdown Structure (WBS)
+
+Struktur rincian kerja (Work Breakdown Structure) membagi proyek ServerCloud menjadi paket kerja yang terdefinisi dengan jelas:
+
+```mermaid
+graph TD
+    WBS["1.0 Proyek ServerCloud UMKM"]
+    
+    WBS --> W1["1.1 Inisiasi & Analisis"]
+    W1 --> W11["1.1.1 Studi Kasus UMKM Cloud"]
+    W1 --> W12["1.1.2 Kebutuhan Fungsional & Non-Fungsional"]
+    W1 --> W13["1.1.3 Penyusunan Dokumen SRS"]
+
+    WBS --> W2["1.2 Perancangan Sistem (Design)"]
+    W2 --> W21["1.2.1 ERD 4 Tabel PostgreSQL"]
+    W2 --> W22["1.2.2 Pemodelan UML (Use Case & Activity)"]
+    W2 --> W23["1.2.3 Desain Antarmuka Mobile (Neo-Brutalism)"]
+    W2 --> W24["1.2.4 Spesifikasi REST API (/docs/API_SPEC)"]
+
+    WBS --> W3["1.3 Pengembangan Backend & Database"]
+    W3 --> W31["1.3.1 Setup Database Aiven Cloud (SSL)"]
+    W3 --> W32["1.3.2 Modul Autentikasi JWT & Bcrypt"]
+    W3 --> W33["1.3.3 CRUD Kategori & Paket Server (Zod)"]
+    W3 --> W34["1.3.4 Modul Transaksi Sewa & Invoicing"]
+    W3 --> W35["1.3.5 Integrasi Upload Cloudinary"]
+
+    WBS --> W4["1.4 Pengembangan Aplikasi Mobile (Flutter)"]
+    W4 --> W41["1.4.1 Setup Tema Neo-Brutalism & Routing"]
+    W4 --> W42["1.4.2 Layar Login, Register, & Splash"]
+    W4 --> W43["1.4.3 Katalog Paket, Search, & Filter"]
+    W4 --> W44["1.4.4 Form Paket & Image Picker (Kamera/Galeri)"]
+    W4 --> W45["1.4.5 Modul Sewa, Invoice, & Simulasi Bayar"]
+    W4 --> W46["1.4.6 Bottom Navigation (Katalog, Riwayat, Profil)"]
+
+    WBS --> W5["1.5 Pengujian & Deployment"]
+    W5 --> W51["1.5.1 Blackbox Testing 8 Skenario"]
+    W5 --> W52["1.5.2 Deploy Serverless Vercel & Docs HTML"]
+    W5 --> W53["1.5.3 Finalisasi Dokumen Word & Uji Level"]
+```
+
+| Kode WBS | Tahapan Pekerjaan | Deliverable / Hasil Capaian |
+| :--- | :--- | :--- |
+| **1.1** | **Inisiasi & Analisis Kebutuhan** | Dokumen SRS BAB I - III |
+| 1.1.1 | Studi Kasus UMKM Cloud Hosting | Analisis perbandingan harga dan resource VPS lokal |
+| 1.1.2 | Analisis Kebutuhan Sistem | Daftar kebutuhan fungsional FR-01 s/d FR-12 |
+| 1.1.3 | Dokumen SRS Versi Awal | Draft spesifikasi kebutuhan perangkat lunak |
+| **1.2** | **Perancangan Sistem (Design)** | Diagram UML, ERD, dan API Specification |
+| 1.2.1 | Pemodelan Basis Data Relasional | ERD 4 tabel (`users`, `categories`, `packages`, `orders`) |
+| 1.2.2 | Pemodelan UML | Diagram Use Case, Activity Diagram, dan Class Diagram |
+| 1.2.3 | Desain Antarmuka Mobile | Style Guide Neo-Brutalism (border 2px, shadow padat) |
+| 1.2.4 | Desain Kontrak API | Dokumen `API_SPEC.md` format JSON RESTful |
+| **1.3** | **Pengembangan Backend & Database** | REST API Express TypeScript Live |
+| 1.3.1 | Setup Database Aiven | Database PostgreSQL 16 SSL terhubung |
+| 1.3.2 | Autentikasi & Keamanan | Endpoint register (default client), login, dan token JWT |
+| 1.3.3 | Modul Kategori & Paket Server | Endpoint CRUD terproteksi middleware admin |
+| 1.3.4 | Modul Transaksi & Invoice | Endpoint `POST /api/orders` & `PATCH /:id/pay` |
+| 1.3.5 | Integrasi Media Cloudinary | Upload foto banner spesifikasi hardware |
+| **1.4** | **Pengembangan Aplikasi Mobile (Flutter)** | Aplikasi Android Flutter ServerCloud |
+| 1.4.1 | Setup UI & Tema | `AppTheme.neoDecoration` dan konfigurasi Google Fonts |
+| 1.4.2 | Fitur Autentikasi | Layar splash auto-login, form login cepat, register |
+| 1.4.3 | Katalog Layanan | List paket server, filter kategori, dan pencarian |
+| 1.4.4 | Manajemen Paket & Gambar | Form tambah/edit dengan kamera & galeri HP |
+| 1.4.5 | Transaksi & Invoice | Modal sewa, rincian biaya, dan aktivasi IP server |
+| 1.4.6 | Navigasi Bottom Bar | Tab Katalog, Riwayat Sewa, dan Profil Pengguna |
+| **1.5** | **Pengujian & Deployment** | Rilis Produksi & Dokumen Siap Uji |
+| 1.5.1 | Blackbox Testing | 8 skenario pengujian dengan status BERHASIL |
+| 1.5.2 | Deployment Cloud | Vercel Serverless & Interactive Docs di `/api/docs` |
+| 1.5.3 | Finalisasi Dokumen Uji Level | Dokumen SRS Word (`.docx`) dan slide persiapan uji |
+
 ---
 
 # BAB III ANALISIS KEBUTUHAN SISTEM

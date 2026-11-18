@@ -21,7 +21,7 @@ class ServerCloudApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ServerCloud Mobile',
+      title: 'ServerCloud',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
       initialRoute: '/splash',

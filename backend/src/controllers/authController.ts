@@ -2,6 +2,7 @@ import { type Request, type Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import pool from "../config/db.ts";
+import cloudinary, { isCloudinaryConfigured } from "../config/cloudinary.ts";
 import "dotenv/config";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret_servercloud_jwt_token_key_2026";
@@ -66,7 +67,7 @@ export const login = async (req: Request, res: Response): Promise<any> => {
     const { email, password } = req.body;
 
     const result = await pool.query(
-      "SELECT id, full_name, email, password, role, phone, created_at FROM users WHERE email = $1",
+      "SELECT id, full_name, email, password, role, phone, avatar_url, created_at FROM users WHERE email = $1",
       [email]
     );
 
@@ -123,7 +124,7 @@ export const getProfile = async (req: Request, res: Response): Promise<any> => {
     const userId = req.user?.id;
 
     const result = await pool.query(
-      "SELECT id, full_name, email, role, phone, created_at FROM users WHERE id = $1",
+      "SELECT id, full_name, email, role, phone, avatar_url, created_at FROM users WHERE id = $1",
       [userId]
     );
 
@@ -144,6 +145,80 @@ export const getProfile = async (req: Request, res: Response): Promise<any> => {
     return res.status(500).json({
       success: false,
       message: "Gagal mengambil data profil",
+      error: error.message,
+    });
+  }
+};
+
+export const updateProfile = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Akses tidak diizinkan. Silakan login terlebih dahulu." });
+    }
+
+    const { full_name, phone } = req.body;
+    let avatarUrl: string | undefined = undefined;
+
+    if (req.file) {
+      if (isCloudinaryConfigured) {
+        try {
+          const b64 = Buffer.from(req.file.buffer).toString("base64");
+          const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+          const uploadResult = await cloudinary.uploader.upload(dataURI, {
+            folder: "servercloud-avatars",
+            resource_type: "image",
+          });
+          avatarUrl = uploadResult.secure_url;
+        } catch (uploadErr: any) {
+          console.warn("Cloudinary upload failed:", uploadErr.message);
+        }
+      }
+    }
+
+    const fields: string[] = [];
+    const values: any[] = [];
+    let idx = 1;
+
+    if (full_name) {
+      fields.push(`full_name = $${idx++}`);
+      values.push(full_name);
+    }
+    if (phone !== undefined) {
+      fields.push(`phone = $${idx++}`);
+      values.push(phone);
+    }
+    if (avatarUrl) {
+      fields.push(`avatar_url = $${idx++}`);
+      values.push(avatarUrl);
+    }
+
+    if (fields.length === 0) {
+      const current = await pool.query(
+        "SELECT id, full_name, email, role, phone, avatar_url, created_at FROM users WHERE id = $1",
+        [userId]
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Tidak ada data yang diubah",
+        data: current.rows[0],
+      });
+    }
+
+    values.push(userId);
+    const queryText = `UPDATE users SET ${fields.join(", ")} WHERE id = $${idx} RETURNING id, full_name, email, role, phone, avatar_url, created_at`;
+    const result = await pool.query(queryText, values);
+
+    return res.status(200).json({
+      success: true,
+      message: "Profil pengguna berhasil diperbarui",
+      data: result.rows[0],
+    });
+  } catch (error: any) {
+    console.error("UPDATE PROFILE ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Gagal memperbarui profil pengguna",
       error: error.message,
     });
   }

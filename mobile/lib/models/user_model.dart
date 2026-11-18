@@ -4,6 +4,7 @@ class UserModel {
   final String email;
   final String role;
   final String? phone;
+  final String? avatarUrl;
 
   UserModel({
     required this.id,
@@ -11,6 +12,7 @@ class UserModel {
     required this.email,
     required this.role,
     this.phone,
+    this.avatarUrl,
   });
 
   bool get isAdmin => role == 'admin';
@@ -23,6 +25,7 @@ class UserModel {
       email: json['email'] ?? '',
       role: json['role'] ?? 'client',
       phone: json['phone']?.toString(),
+      avatarUrl: json['avatar_url']?.toString(),
     );
   }
 
@@ -33,6 +36,7 @@ class UserModel {
       'email': email,
       'role': role,
       'phone': phone,
+      'avatar_url': avatarUrl,
     };
   }
 }

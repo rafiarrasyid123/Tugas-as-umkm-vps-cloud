@@ -426,38 +426,6 @@ class _PackageDetailScreenState extends State<PackageDetailScreen> {
     );
   }
 
-  Widget _buildSummaryRow(
-    String label,
-    String value, {
-    bool isBold = false,
-    Color? highlightColor,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            color: AppTheme.textMuted,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.end,
-            style: GoogleFonts.inter(
-              fontSize: isBold ? 14 : 12,
-              fontWeight: isBold ? FontWeight.w900 : FontWeight.w700,
-              color: highlightColor ?? AppTheme.textPrimary,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_package == null) {

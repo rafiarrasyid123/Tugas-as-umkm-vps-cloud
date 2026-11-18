@@ -291,6 +291,163 @@ async function buildDocx() {
             ],
           }),
 
+          p("", { spacingAfter: 160 }),
+
+          h2("2.3 Work Breakdown Structure (WBS)"),
+          p("Work Breakdown Structure (WBS) merinci seluruh cakupan kerja proyek ServerCloud menjadi paket pekerjaan hierarkis yang terukur:"),
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              new TableRow({
+                children: [
+                  createHeaderCell("KODE WBS", 20),
+                  createHeaderCell("PAKET PEKERJAAN", 45),
+                  createHeaderCell("DELIVERABLE / OUTPUT", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.1", 20),
+                  createCell("Inisiasi & Analisis Kebutuhan", 45),
+                  createCell("Dokumen SRS BAB I - III", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.1.1", 20, true),
+                  createCell("Studi Kasus UMKM Cloud Hosting", 45, true),
+                  createCell("Analisis kebutuhan VPS lokal", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.1.2", 20),
+                  createCell("Daftar Kebutuhan Fungsional", 45),
+                  createCell("Matriks FR-01 s/d FR-12", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.2", 20, true),
+                  createCell("Perancangan Sistem (Design)", 45, true),
+                  createCell("Diagram UML, ERD, API Spec", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.2.1", 20),
+                  createCell("Pemodelan Database Relasional", 45),
+                  createCell("ERD 4 tabel relasional", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.2.2", 20, true),
+                  createCell("Pemodelan UML & Arsitektur", 45, true),
+                  createCell("Use Case, Activity, & Class", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.2.3", 20),
+                  createCell("Desain Antarmuka Mobile", 45),
+                  createCell("Style Guide Neo-Brutalism", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3", 20, true),
+                  createCell("Pengembangan Backend & DB", 45, true),
+                  createCell("REST API Express TypeScript", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3.1", 20),
+                  createCell("Setup Database Cloud Aiven", 45),
+                  createCell("PostgreSQL 16 SSL Aktif", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3.2", 20, true),
+                  createCell("Autentikasi & Keamanan JWT", 45, true),
+                  createCell("Login & Register Bcrypt", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3.3", 20),
+                  createCell("Modul Kategori & Paket Server", 45),
+                  createCell("Endpoint CRUD & Zod Validator", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3.4", 20, true),
+                  createCell("Modul Transaksi & Invoicing", 45, true),
+                  createCell("Endpoint Order & Simulasi Bayar", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4", 20),
+                  createCell("Pengembangan Mobile Flutter", 45),
+                  createCell("Aplikasi Android ServerCloud", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4.1", 20, true),
+                  createCell("Autentikasi & Tema Neo-Brutalism", 45, true),
+                  createCell("Layar Login, Register, Splash", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4.2", 20),
+                  createCell("Katalog & Detail Paket Server", 45),
+                  createCell("Search live, filter kategori", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4.3", 20, true),
+                  createCell("Form Paket & Upload Gambar", 45, true),
+                  createCell("Image Picker kamera/galeri HP", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4.4", 20),
+                  createCell("Transaksi Sewa & Bottom Nav", 45),
+                  createCell("Layar Order, Invoice, & Profil", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.5", 20, true),
+                  createCell("Pengujian & Deployment", 45, true),
+                  createCell("Rilis Produksi & Laporan Uji", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.5.1", 20),
+                  createCell("Blackbox Testing", 45),
+                  createCell("8 Skenario Uji Sukses", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.5.2", 20, true),
+                  createCell("Deployment Cloud Vercel", 45, true),
+                  createCell("Live Web & Interactive Docs", 35, true),
+                ],
+              }),
+            ],
+          }),
+
           p("", { spacingAfter: 200 }),
 
           // BAB III ANALISIS KEBUTUHAN SISTEM
@@ -544,6 +701,163 @@ async function buildDocx() {
             ],
           }),
 
+          p("", { spacingAfter: 160 }),
+
+          h2("2.3 Work Breakdown Structure (WBS)"),
+          p("Work Breakdown Structure (WBS) merinci seluruh cakupan kerja proyek ServerCloud menjadi paket pekerjaan hierarkis yang terukur:"),
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              new TableRow({
+                children: [
+                  createHeaderCell("KODE WBS", 20),
+                  createHeaderCell("PAKET PEKERJAAN", 45),
+                  createHeaderCell("DELIVERABLE / OUTPUT", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.1", 20),
+                  createCell("Inisiasi & Analisis Kebutuhan", 45),
+                  createCell("Dokumen SRS BAB I - III", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.1.1", 20, true),
+                  createCell("Studi Kasus UMKM Cloud Hosting", 45, true),
+                  createCell("Analisis kebutuhan VPS lokal", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.1.2", 20),
+                  createCell("Daftar Kebutuhan Fungsional", 45),
+                  createCell("Matriks FR-01 s/d FR-12", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.2", 20, true),
+                  createCell("Perancangan Sistem (Design)", 45, true),
+                  createCell("Diagram UML, ERD, API Spec", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.2.1", 20),
+                  createCell("Pemodelan Database Relasional", 45),
+                  createCell("ERD 4 tabel relasional", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.2.2", 20, true),
+                  createCell("Pemodelan UML & Arsitektur", 45, true),
+                  createCell("Use Case, Activity, & Class", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.2.3", 20),
+                  createCell("Desain Antarmuka Mobile", 45),
+                  createCell("Style Guide Neo-Brutalism", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3", 20, true),
+                  createCell("Pengembangan Backend & DB", 45, true),
+                  createCell("REST API Express TypeScript", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3.1", 20),
+                  createCell("Setup Database Cloud Aiven", 45),
+                  createCell("PostgreSQL 16 SSL Aktif", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3.2", 20, true),
+                  createCell("Autentikasi & Keamanan JWT", 45, true),
+                  createCell("Login & Register Bcrypt", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3.3", 20),
+                  createCell("Modul Kategori & Paket Server", 45),
+                  createCell("Endpoint CRUD & Zod Validator", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.3.4", 20, true),
+                  createCell("Modul Transaksi & Invoicing", 45, true),
+                  createCell("Endpoint Order & Simulasi Bayar", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4", 20),
+                  createCell("Pengembangan Mobile Flutter", 45),
+                  createCell("Aplikasi Android ServerCloud", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4.1", 20, true),
+                  createCell("Autentikasi & Tema Neo-Brutalism", 45, true),
+                  createCell("Layar Login, Register, Splash", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4.2", 20),
+                  createCell("Katalog & Detail Paket Server", 45),
+                  createCell("Search live, filter kategori", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4.3", 20, true),
+                  createCell("Form Paket & Upload Gambar", 45, true),
+                  createCell("Image Picker kamera/galeri HP", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.4.4", 20),
+                  createCell("Transaksi Sewa & Bottom Nav", 45),
+                  createCell("Layar Order, Invoice, & Profil", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.5", 20, true),
+                  createCell("Pengujian & Deployment", 45, true),
+                  createCell("Rilis Produksi & Laporan Uji", 35, true),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.5.1", 20),
+                  createCell("Blackbox Testing", 45),
+                  createCell("8 Skenario Uji Sukses", 35),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  createCell("1.5.2", 20, true),
+                  createCell("Deployment Cloud Vercel", 45, true),
+                  createCell("Live Web & Interactive Docs", 35, true),
+                ],
+              }),
+            ],
+          }),
+
           p("", { spacingAfter: 200 }),
 
           h2("4.5 Dokumentasi Deployment Cloud"),
@@ -574,8 +888,18 @@ async function buildDocx() {
 
   const buffer = await Packer.toBuffer(doc);
   const outPath = path.resolve(process.cwd(), "..", "Dokumen_SRS_ServerCloud_Rafi_Arrasyid_XI_RPL_3.docx");
-  fs.writeFileSync(outPath, buffer);
-  console.log("SUCCESS: Word SRS document re-generated at:", outPath);
+  try {
+    fs.writeFileSync(outPath, buffer);
+    console.log("SUCCESS: Word SRS document re-generated at:", outPath);
+  } catch (err: any) {
+    if (err.code === 'EBUSY') {
+      const altPath = path.resolve(process.cwd(), "..", "Dokumen_SRS_ServerCloud_Rafi_Arrasyid_XI_RPL_3_Terbaru.docx");
+      fs.writeFileSync(altPath, buffer);
+      console.log("File utama sedang dibuka di Word. Berhasil disimpan ke file alternatif:", altPath);
+    } else {
+      throw err;
+    }
+  }
 }
 
 buildDocx();
