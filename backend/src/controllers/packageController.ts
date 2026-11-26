@@ -11,7 +11,7 @@ const generateSlug = (text: string) => {
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 };
-
+  
 export const getAllPackages = async (req: Request, res: Response): Promise<any> => {
   try {
     const { category_id, search, sort } = req.query;
